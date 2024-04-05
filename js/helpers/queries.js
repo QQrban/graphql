@@ -2,6 +2,8 @@ const initialQuery = `{
       user {
           firstName
           lastName
+          auditRatio
+          login
       }
       auditGiven: transaction_aggregate(where: {type: {_eq: "up"}}) {
         aggregate {

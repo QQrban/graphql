@@ -30,13 +30,25 @@ input {
 }
 
 body {
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   background-color: #dadada;
   position: relative;
+}
+
+body.home {
+  min-height: 100vh;
+}
+
+#content.articles {
+  width: 100%;
+  padding-top: 140px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
 }
 
 #form {
@@ -72,11 +84,18 @@ h3 {
   transform: translateY(-50%);
 }
 
+header {
+  padding: 10px 20px;
+  display: flex;
+  width: 100%;
+  position: absolute;
+  top: 0px;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .is-error {
   width: 160px;
-  position: absolute;
-  right: 20px;
-  top: 10px;
 }
 
 #errorMsg {
@@ -86,8 +105,36 @@ h3 {
   font-size: 14px;
 }
 
-.select-container {
-  position: absolute;
-  left: 20px;
-  top: 20px;
+h1 {
+  margin-top: 20px;
+}
+
+.audits-earned {
+  color: #92cc41;
+}
+
+.audits-received {
+  color: #e76e55;
+}
+
+.audits-ratio {
+  color: #209cee;
+}
+
+.header-logout-git {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.git {
+  width: 56px;
+}
+
+.git:hover {
+  opacity: 0.7;
+}
+
+.total-exp {
+  color: #444;
 }
