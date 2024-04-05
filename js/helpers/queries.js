@@ -1,50 +1,62 @@
-const staticQuery = `
-        user {
-            firstName
-            lastName
-        }
-    `;
-
-const div01Query = `{
-    ${staticQuery}
-    transaction(
-        where: {
-          type: {_eq: "xp"},
-          _and: [
-            {path: {_like: "/johvi/div-01/%"}},
-            {path: {_nlike: "/johvi/div-01/piscine-js%"}}
-          ]
-        }
-      ) {
-        amount
-        path
+const initialQuery = `{
+      user {
+          firstName
+          lastName
       }
+      auditGiven: transaction(where: {type: {_eq: "up"}}) {
+        amount
+      }
+      auditReceived: transaction(where: {type: {_eq: "down"}}) {
+        amount
+      }        
   }`;
 
-const piscineGoQuery = `{
-    ${staticQuery}
-    transaction(
-        where:{
-          type : {_eq:"xp"},
-          path: {_like:"/johvi/piscine-go/%"}
-        }
-      ) {
-        amount
-        path
-      }
-  }`;
+const div01Query = `
+      type: {_eq: "xp"},
+      _and: [
+        {path: {_like: "/johvi/div-01/%"}},
+        {path: {_nlike: "/johvi/div-01/piscine-js%"}}
+      ]
+  `;
 
-const piscineJSQuery = `{
-    ${staticQuery}
-    transaction(
-        where:{
-          type : {_eq:"xp"},
-          path: {_like:"/johvi/div-01/piscine-js%"}
-        }
-      ) {
-        amount
-        path
-      }
-  }`;
+const piscineGoQuery = `
+      type : {_eq:"xp"},
+      path: {_like:"/johvi/piscine-go/%"}
+  `;
 
-export { div01Query, piscineGoQuery, piscineJSQuery };
+const piscineJSQuery = `
+      type : {_eq:"xp"},
+      path: {_like:"/johvi/div-01/piscine-js%"}
+  `;
+
+const generalQuery = (query) => {
+  return `{
+    transaction(
+            where: {
+              ${query}
+            }
+          ) {
+            amount
+            path
+    }  
+    transaction_aggregate(
+              where: {
+                ${query}
+              }
+            ) {
+          aggregate {
+            sum {
+              amount
+            }
+          }
+  }
+    }`;
+};
+
+export {
+  initialQuery,
+  div01Query,
+  piscineGoQuery,
+  piscineJSQuery,
+  generalQuery,
+};

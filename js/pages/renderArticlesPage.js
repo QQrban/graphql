@@ -4,6 +4,8 @@ import {
   piscineGoQuery,
   piscineJSQuery,
   div01Query,
+  initialQuery,
+  generalQuery,
 } from "../helpers/queries.js";
 
 async function renderArticlesPage(token) {
@@ -24,17 +26,30 @@ async function renderArticlesPage(token) {
     `
   );
 
+  const select = document.getElementById("default_select");
+  let data;
+
+  data = await getData({ query: initialQuery }, token);
+  console.log(data);
+  const auditReceived = data.data.auditReceived.reduce(
+    (acc, { amount }) => acc + amount,
+    0
+  );
+  const auditGiven = data.data.auditGiven.reduce(
+    (acc, { amount }) => acc + amount,
+    0
+  );
+  console.log(Math.abs(auditReceived / 1000000).toFixed(2));
+  console.log(Math.abs(auditGiven / 1000000).toFixed(2));
+
   const selectIntra = {
     0: piscineGoQuery,
     1: div01Query,
     2: piscineJSQuery,
   };
 
-  const select = document.getElementById("default_select");
-  let data;
-
   select.addEventListener("change", async (e) => {
-    const queryFunc = selectIntra[e.target.value];
+    const queryFunc = generalQuery(selectIntra[e.target.value]);
     data = await getData({ query: queryFunc }, token);
     console.log(data);
   });
@@ -48,10 +63,13 @@ async function renderArticlesPage(token) {
   );
 
   const logoutBtn = document.getElementById("logoutBtn");
+  const selectIntraContainer = document.querySelector(".select-container");
+
   logoutBtn.addEventListener("click", () => {
     sessionStorage.removeItem("JWT");
     updateAppState();
     logoutBtn.remove();
+    selectIntraContainer.remove();
   });
 }
 
