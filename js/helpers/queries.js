@@ -3,12 +3,16 @@ const initialQuery = `{
           firstName
           lastName
       }
-      auditGiven: transaction(where: {type: {_eq: "up"}}) {
-        amount
+      auditGiven: transaction_aggregate(where: {type: {_eq: "up"}}) {
+        aggregate {
+          sum { amount }
+        }
       }
-      auditReceived: transaction(where: {type: {_eq: "down"}}) {
-        amount
-      }        
+      auditReceived: transaction_aggregate(where: {type: {_eq: "down"}}) {
+        aggregate {
+          sum { amount }
+        }
+      }
   }`;
 
 const div01Query = `

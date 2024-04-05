@@ -31,16 +31,6 @@ async function renderArticlesPage(token) {
 
   data = await getData({ query: initialQuery }, token);
   console.log(data);
-  const auditReceived = data.data.auditReceived.reduce(
-    (acc, { amount }) => acc + amount,
-    0
-  );
-  const auditGiven = data.data.auditGiven.reduce(
-    (acc, { amount }) => acc + amount,
-    0
-  );
-  console.log(Math.abs(auditReceived / 1000000).toFixed(2));
-  console.log(Math.abs(auditGiven / 1000000).toFixed(2));
 
   const selectIntra = {
     0: piscineGoQuery,
