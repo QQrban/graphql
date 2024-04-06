@@ -8,6 +8,7 @@ import {
   generalQuery,
 } from "../helpers/queries.js";
 import ExpComponent from "../components/ExpComponent.js";
+import GraphComponent from "../components/GraphComponent.js";
 
 async function renderArticlesPage(token) {
   const initialData = await getData({ query: initialQuery }, token);
@@ -38,7 +39,6 @@ async function renderArticlesPage(token) {
           </div>
           <button id="logoutBtn" type="button" class="nes-btn is-error">Log Out</button>
       </div>
-
     </header>
     `
   );
@@ -57,45 +57,56 @@ async function renderArticlesPage(token) {
   const { auditGiven, auditReceived } = initialData.data;
   const { auditRatio } = initialData.data.user[0];
   const { amount: totalExp } = expData.data.transaction_aggregate.aggregate.sum;
+  const { transaction: transactions } = expData.data;
 
   //Audit -- static
   mainContent.insertAdjacentHTML(
     "beforeend",
     `
-      <section class="nes-container with-title">
-      <h3 class="title">Audits</h3>
-      <div>
-        Audit ratio: <span class="audits-ratio">${Math.abs(auditRatio).toFixed(
-          1
-        )}
-        </span>
-      </div>
-      <div>
-        Audit XP earned: <span class="audits-earned"> ${Math.abs(
-          auditGiven.aggregate.sum.amount / 1000000
-        ).toFixed(2)} MB</span>
-      </div>
-      <div >
-        Audit XP received: <span class="audits-received"> ${Math.abs(
-          auditReceived.aggregate.sum.amount / 1000000
-        ).toFixed(2)} MB</span>
-      </div>
+    <div class="left-column">
+           <section class="nes-container with-title audits-container">
+        <h3 class="title">Audits</h3>
+        <div>
+          Audit ratio: <span class="audits-ratio">${Math.abs(
+            auditRatio
+          ).toFixed(1)}
+          </span>
+        </div>
+        <div>
+          Audit XP earned: <span class="audits-earned"> ${Math.abs(
+            auditGiven.aggregate.sum.amount / 1000000
+          ).toFixed(2)} MB</span>
+        </div>
+        <div>
+          Audit XP received: <span class="audits-received"> ${Math.abs(
+            auditReceived.aggregate.sum.amount / 1000000
+          ).toFixed(2)} MB</span>
+        </div>
       </section>
       <div id="expTransactions">
-        ${ExpComponent(totalExp)}
+        ${ExpComponent(totalExp, transactions)}
       </div>
+    </div>
+    <div id="graph">
+      ${GraphComponent()}
+    </div>
     `
   );
 
+  //Exp -- dynamic
   const expTransactions = document.getElementById("expTransactions");
 
-  //Exp
   select.addEventListener("change", async (e) => {
     const queryFunc = generalQuery(selectIntra[e.target.value]);
     expData = await getData({ query: queryFunc }, token);
     const { amount: totalExp } =
       expData.data.transaction_aggregate.aggregate.sum;
-    expTransactions.innerHTML = ExpComponent(totalExp);
+    const { transaction: transactions } = expData.data;
+    expTransactions.innerHTML = ExpComponent(
+      totalExp,
+      transactions,
+      e.target.value
+    );
   });
 
   const logoutBtn = document.getElementById("logoutBtn");

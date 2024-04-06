@@ -43,12 +43,22 @@ body.home {
 }
 
 #content.articles {
+  padding: 40px;
   width: 100%;
   padding-top: 140px;
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
-  justify-content: center;
+}
+
+.left-column {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+#graph {
+  flex: 1;
 }
 
 #form {
@@ -109,6 +119,10 @@ h1 {
   margin-top: 20px;
 }
 
+.audits-container {
+  max-height: 150px;
+}
+
 .audits-earned {
   color: #92cc41;
 }
@@ -137,4 +151,19 @@ h1 {
 
 .total-exp {
   color: #444;
+}
+
+.transactions-table {
+  margin-top: 14px;
+}
+
+.nes-table {
+  font-size: 10.5px !important;
+  border-image-repeat: unset !important;
+  background: inherit !important;
+}
+
+.nes-table th,
+.nes-table td {
+  padding: 4px 6px;
 }
