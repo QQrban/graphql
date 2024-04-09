@@ -16,7 +16,7 @@ function renderHomePage() {
         <label for="passwordField">Password</label>
         <div class="password-container">
           <input type="password" id="passwordField" class="nes-input" />
-          <div class="password-visibility hidden" id="showPassword">
+          <div class="password-visibility hidden nes-pointer" id="showPassword">
             <svg
               class="show-pass"
               width="34px"
@@ -39,7 +39,7 @@ function renderHomePage() {
               </g>
             </svg>
           </div>
-          <div class="password-visibility" id="hidePassword">
+          <div class="password-visibility nes-pointer" id="hidePassword">
             <svg
               class="hide-pass"
               width="34px"

@@ -43,7 +43,7 @@ body.home {
 }
 
 #content.articles {
-  padding: 40px;
+  padding: 20px;
   width: 100%;
   padding-top: 140px;
   display: flex;
@@ -59,6 +59,10 @@ body.home {
 
 #graph {
   flex: 1;
+}
+
+#graphContainer {
+  padding-left: 60px;
 }
 
 #form {
@@ -81,6 +85,10 @@ h3 {
 
 .hidden {
   display: none;
+}
+
+.visible {
+  overflow: visible;
 }
 
 .password-container {
@@ -123,15 +131,15 @@ h1 {
   max-height: 150px;
 }
 
-.audits-earned {
+.success-color {
   color: #92cc41;
 }
 
-.audits-received {
+.error-color {
   color: #e76e55;
 }
 
-.audits-ratio {
+.light-blue-color {
   color: #209cee;
 }
 
@@ -166,4 +174,8 @@ h1 {
 .nes-table th,
 .nes-table td {
   padding: 4px 6px;
+}
+
+text {
+  font-size: 7.5px !important;
 }

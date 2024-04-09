@@ -22,20 +22,17 @@ const div01Query = `
       _and: [
         {path: {_like: "/johvi/div-01/%"}},
         {path: {_nlike: "/johvi/div-01/piscine-js%"}}
-        {amount: {_gte: 1200}}
       ]
   `;
 
 const piscineGoQuery = `
       type : {_eq:"xp"},
       path: {_like:"/johvi/piscine-go/%"}
-      amount: {_gte: 1200}
   `;
 
 const piscineJSQuery = `
       type : {_eq:"xp"},
       path: {_like:"/johvi/div-01/piscine-js%"}
-      amount: {_gte: 1200}
   `;
 
 const generalQuery = (query) => {
@@ -59,7 +56,7 @@ const generalQuery = (query) => {
               amount
             }
           }
-  }
+    }
     }`;
 };
 

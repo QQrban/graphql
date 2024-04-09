@@ -9,10 +9,11 @@ import {
 } from "../helpers/queries.js";
 import ExpComponent from "../components/ExpComponent.js";
 import GraphComponent from "../components/GraphComponent.js";
+import { dataProcessing } from "../helpers/dataProcessing.js";
+import { buildGraph } from "../helpers/buildGraph.js";
 
 async function renderArticlesPage(token) {
   const initialData = await getData({ query: initialQuery }, token);
-  console.log(initialData);
   const mainContent = document.getElementById("content");
 
   document.body.classList.remove("home");
@@ -51,7 +52,6 @@ async function renderArticlesPage(token) {
 
   const select = document.getElementById("default_select");
   let expData = await getData({ query: generalQuery(div01Query) }, token);
-  console.log(expData);
 
   mainContent.innerHTML = "";
   const { auditGiven, auditReceived } = initialData.data;
@@ -67,18 +67,18 @@ async function renderArticlesPage(token) {
            <section class="nes-container with-title audits-container">
         <h3 class="title">Audits</h3>
         <div>
-          Audit ratio: <span class="audits-ratio">${Math.abs(
+          Audit ratio: <span class="light-blue-color">${Math.abs(
             auditRatio
           ).toFixed(1)}
           </span>
         </div>
         <div>
-          Audit XP earned: <span class="audits-earned"> ${Math.abs(
+          Audit XP earned: <span class="success-color"> ${Math.abs(
             auditGiven.aggregate.sum.amount / 1000000
           ).toFixed(2)} MB</span>
         </div>
         <div>
-          Audit XP received: <span class="audits-received"> ${Math.abs(
+          Audit XP received: <span class="error-color"> ${Math.abs(
             auditReceived.aggregate.sum.amount / 1000000
           ).toFixed(2)} MB</span>
         </div>
@@ -96,19 +96,6 @@ async function renderArticlesPage(token) {
   //Exp -- dynamic
   const expTransactions = document.getElementById("expTransactions");
 
-  select.addEventListener("change", async (e) => {
-    const queryFunc = generalQuery(selectIntra[e.target.value]);
-    expData = await getData({ query: queryFunc }, token);
-    const { amount: totalExp } =
-      expData.data.transaction_aggregate.aggregate.sum;
-    const { transaction: transactions } = expData.data;
-    expTransactions.innerHTML = ExpComponent(
-      totalExp,
-      transactions,
-      e.target.value
-    );
-  });
-
   const logoutBtn = document.getElementById("logoutBtn");
   const header = document.querySelector("header");
 
@@ -118,6 +105,31 @@ async function renderArticlesPage(token) {
     header.remove();
     mainContent.classList.remove("articles");
     document.body.classList.add("home");
+  });
+
+  let graphData = expData.data.transaction;
+  let processedData = dataProcessing(graphData);
+
+  buildGraph(processedData);
+
+  select.addEventListener("change", async (e) => {
+    const queryFunc = generalQuery(selectIntra[e.target.value]);
+    expData = await getData({ query: queryFunc }, token);
+    graphData = expData.data.transaction;
+    processedData = dataProcessing(graphData);
+    const { amount: totalExp } =
+      expData.data.transaction_aggregate.aggregate.sum;
+    const { transaction: transactions } = expData.data;
+    expTransactions.innerHTML = ExpComponent(
+      totalExp,
+      transactions,
+      e.target.value
+    );
+    let svgContainer = document.querySelector(".svg_container");
+    if (svgContainer) {
+      svgContainer.remove();
+    }
+    buildGraph(processedData);
   });
 }
 

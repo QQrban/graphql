@@ -38,23 +38,37 @@ function ExpComponent(totalExp, transactions, value = null) {
                           minute: "2-digit",
                         });
 
+                        let formatString;
+                        if (value == 0 || value == 2) {
+                          formatString = transaction.path
+                            .replace(/deprecated-\d{2}-\d{2}-\d{4}-/, "")
+                            .split("/")
+                            .slice(-1)[0];
+                        }
                         return `
-            <tr>
-              <td>${Number(
-                Math.abs(transaction.amount / 1000).toFixed(2)
-              )} kB</td>
-              <td>${formattedDate} ${formattedTime}</td>
-
-              <td>${
-                value == 0 || value == 2
-                  ? transaction.path
-                      .replace(/deprecated-\d{2}-\d{2}-\d{4}-/, "")
-                      .split("/")
-                      .slice(-1)
-                  : transaction.path.split("/").slice(-1)
-              }</td>
-            </tr>
-          `;
+                        ${
+                          Number(
+                            Math.abs(transaction.amount / 1000).toFixed(2)
+                          ) > 1
+                            ? `              
+                          <tr>
+                            <td>${Number(
+                              Math.abs(transaction.amount / 1000).toFixed(2)
+                            )} kB
+                            </td>
+                            <td>${formattedDate} ${formattedTime}</td>
+                            <td>${
+                              value == 0 || value == 2
+                                ? formatString.length > 12
+                                  ? formatString.slice(0, 12) + "..."
+                                  : formatString
+                                : transaction.path.split("/").slice(-1)[0]
+                            }
+                            </td>
+                          </tr>`
+                            : ""
+                        }
+            `;
                       })
                       .join("")
                   : ""
