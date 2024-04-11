@@ -11,6 +11,7 @@ import ExpComponent from "../components/ExpComponent.js";
 import GraphComponent from "../components/GraphComponent.js";
 import { dataProcessing } from "../helpers/dataProcessing.js";
 import { buildGraph } from "../helpers/buildGraph.js";
+import { renderErrorModal } from "../utils/renderErrorModal.js";
 
 async function renderArticlesPage(token) {
   const initialData = await getData({ query: initialQuery }, token);
@@ -115,6 +116,9 @@ async function renderArticlesPage(token) {
   select.addEventListener("change", async (e) => {
     const queryFunc = generalQuery(selectIntra[e.target.value]);
     expData = await getData({ query: queryFunc }, token);
+    if (expData.data.transaction.length < 1) {
+      renderErrorModal("Sorry transactions data is missing");
+    }
     graphData = expData.data.transaction;
     processedData = dataProcessing(graphData);
     const { amount: totalExp } =

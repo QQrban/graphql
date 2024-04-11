@@ -213,6 +213,7 @@ h1 {
 
   h1 {
     order: 1;
+    text-align: center;
   }
   .select-container {
     order: 2;
@@ -226,7 +227,7 @@ h1 {
   }
 }
 
-@media (max-width: 872px) {
+@media (max-width: 890px) {
   h1 {
     font-size: 16px;
   }
@@ -236,4 +237,11 @@ h1 {
   .audits-container div {
     font-size: 12px;
   }
+}
+
+#dialog-default {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }

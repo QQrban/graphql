@@ -71,7 +71,7 @@ function ExpComponent(totalExp, transactions, value = null) {
             `;
                       })
                       .join("")
-                  : ""
+                  : "No Data"
               }
               </tbody>
             </table>

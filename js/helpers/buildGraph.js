@@ -1,6 +1,11 @@
+import { renderErrorModal } from "../utils/renderErrorModal.js";
 import { formatExp } from "./formatExp.js";
 
 function buildGraph(processedData, width = 1220, height = 700) {
+  if (processedData.length < 2) {
+    renderErrorModal("Sorry, but data is missing!");
+    return;
+  }
   if (window.innerWidth < 770) {
     width = 700;
   }

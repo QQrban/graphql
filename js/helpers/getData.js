@@ -1,3 +1,5 @@
+import { renderErrorModal } from "../utils/renderErrorModal.js";
+
 async function getData(query, token) {
   try {
     const response = await fetch(
@@ -16,6 +18,7 @@ async function getData(query, token) {
       return data;
     }
   } catch (error) {
+    renderErrorModal(error);
     console.error(error);
   }
 }
