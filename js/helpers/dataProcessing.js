@@ -1,51 +1,46 @@
-function formatDate(isoString) {
-  const date = new Date(isoString);
-  return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+import { formatDate } from "./formatDate.js";
+
+function aggregateDataByDate(graphData) {
+  const groupedByDate = graphData.reduce((acc, item) => {
+    const date = formatDate(item.createdAt);
+    if (!acc[date]) {
+      acc[date] = { amount: 0, dates: [] };
+    }
+    acc[date].amount += item.amount;
+    acc[date].dates.push(item.createdAt);
+    return acc;
+  }, {});
+
+  return Object.entries(groupedByDate).map(([createdAtFormatted, data]) => ({
+    createdAtFormatted,
+    amount: data.amount,
+    dates: data.dates,
+  }));
 }
 
 function dataProcessing(graphData) {
-  const sortedByDate = graphData.sort(
-    (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
+  const aggregatedByDate = aggregateDataByDate(graphData);
+
+  const sortedByDate = aggregatedByDate.sort(
+    (a, b) => new Date(a.dates[0]) - new Date(b.dates[0])
   );
 
   let totalExp = 0;
   const transformedData = sortedByDate.map((item) => {
     totalExp += item.amount;
     return {
-      createdAtFormatted: formatDate(item.createdAt),
-      cumulativeExp: Number(Math.abs(totalExp / 1000).toFixed(1)),
+      createdAtFormatted: item.createdAtFormatted,
+      cumulativeExp: Number(Math.abs(totalExp / 1000)).toFixed(1),
+      amount: item.amount,
     };
   });
 
-  let sampledData = [];
-  let datesSet = new Set();
+  transformedData.unshift({
+    cumulativeExp: 0,
+    createdAtFormatted: "",
+  });
 
-  if (transformedData.length <= 10) {
-    sampledData = transformedData.filter((item) => {
-      const isUnique = !datesSet.has(item.createdAtFormatted);
-      datesSet.add(item.createdAtFormatted);
-      return isUnique;
-    });
-  } else {
-    const step = (transformedData.length - 1) / 9;
-    for (let i = 0; i < 10; i++) {
-      let index = Math.round(i * step);
-      let currentItem = transformedData[index];
-      while (
-        datesSet.has(currentItem.createdAtFormatted) &&
-        index < transformedData.length - 1
-      ) {
-        index++;
-        currentItem = transformedData[index];
-      }
-      if (!datesSet.has(currentItem.createdAtFormatted)) {
-        sampledData.push(currentItem);
-        datesSet.add(currentItem.createdAtFormatted);
-      }
-    }
-  }
-
-  return sampledData;
+  return transformedData;
 }
 
 export { dataProcessing };

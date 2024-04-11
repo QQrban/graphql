@@ -1,12 +1,23 @@
-function buildGraph(processedData) {
-  const width = 1220;
-  const height = 700;
-  const padding = 30;
-  let svgNS = "http://www.w3.org/2000/svg";
+import { formatExp } from "./formatExp.js";
 
+function buildGraph(processedData, width = 1220, height = 700) {
+  if (window.innerWidth < 770) {
+    width = 700;
+  }
+
+  if (window.innerWidth < 589) {
+    width = 400;
+  }
+
+  let padding = 30;
+  let svgNS = "http://www.w3.org/2000/svg";
+  const svgContainer = document.querySelector(".svg_container");
+  if (svgContainer) {
+    svgContainer.remove();
+  }
   let svg = document.createElementNS(svgNS, "svg");
-  svg.setAttribute("width", 1220);
-  svg.setAttribute("height", height);
+  svg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+
   svg.classList.add("visible");
   svg.classList.add("svg_container");
   document.getElementById("graphContainer").appendChild(svg);
@@ -29,7 +40,7 @@ function buildGraph(processedData) {
       y1: y,
       x2: width,
       y2: y,
-      stroke: "rgba(68, 68, 68, 0.14)",
+      stroke: "rgba(68, 68, 68, 0.11)",
     });
   }
 
@@ -41,7 +52,7 @@ function buildGraph(processedData) {
       y1: padding,
       x2: x + 30,
       y2: height - padding,
-      stroke: "rgba(68, 68, 68, 0.14)",
+      stroke: "rgba(68, 68, 68, 0.11)",
     });
   }
 
@@ -65,6 +76,8 @@ function buildGraph(processedData) {
     ...processedData.map((item) => item.cumulativeExp)
   );
 
+  const totalLabels = 8;
+  const interval = Math.floor((processedData.length - 2) / (totalLabels - 2));
   let previousPoint = null;
 
   processedData.forEach((point, index) => {
@@ -87,36 +100,74 @@ function buildGraph(processedData) {
 
     previousPoint = { x, y };
 
-    createSVGElement("text", {
-      x: x,
-      y: height - 5,
-      "text-anchor": "middle",
-      fill: "black",
-    }).textContent = point.createdAtFormatted;
-
-    function formatExp(cumulativeExp) {
-      if (cumulativeExp > 1000) {
-        return `${Math.abs(cumulativeExp / 1000).toFixed(2)} mB`;
-      } else if (+cumulativeExp < 1) {
-        return `${cumulativeExp * 1000}B `;
-      } else {
-        return `${cumulativeExp} kB`;
-      }
+    if (
+      index === 1 ||
+      index === processedData.length - 1 ||
+      (index % interval === 0 && index !== processedData.length - 2)
+    ) {
+      createSVGElement("text", {
+        x: x,
+        y: height - 5,
+        "text-anchor": "middle",
+        fill: "black",
+        class: "amount",
+      }).textContent = point.createdAtFormatted.split(",")[0];
     }
 
-    createSVGElement("text", {
-      x: -8,
-      y: y,
-      "text-anchor": "middle",
-      fill: "black",
-    }).textContent = formatExp(point.cumulativeExp);
+    if (index !== 0) {
+      const circle = createSVGElement("circle", {
+        cx: x,
+        cy: y,
+        r: 4,
+        class: "circles-with-data",
+        fill: "#444",
+        "data-amount": point.amount,
+        "data-date": point.createdAtFormatted,
+      });
 
-    createSVGElement("circle", {
-      cx: x,
-      cy: y,
-      r: 3,
-      fill: "#444",
-    });
+      const label = createSVGElement("text", {
+        x: x - 80,
+        y: y - 10,
+        "text-anchor": "middle",
+        fill: "#209cee",
+        class: "circle-label",
+        "font-size": "10px",
+        visibility: "hidden",
+      });
+      label.textContent = `${point.createdAtFormatted}; +${formatExp(
+        Number(Math.abs(point.amount / 1000).toFixed(1))
+      )}`;
+
+      circle.addEventListener("mouseover", () => {
+        label.setAttribute("visibility", "visible");
+      });
+
+      circle.addEventListener("mouseout", () => {
+        label.setAttribute("visibility", "hidden");
+      });
+    }
+
+    let yAxisInterval = maxCumulativeExp > 1000 ? 100 : 50;
+
+    let yAxisLabelsCount = Math.floor(maxCumulativeExp / yAxisInterval);
+
+    for (let i = 0; i <= yAxisLabelsCount; i++) {
+      let labelValue = i * yAxisInterval;
+      let y =
+        height -
+        padding -
+        (labelValue / maxCumulativeExp) * (height - 2 * padding);
+
+      createSVGElement("text", {
+        x: padding - 10,
+        y: y,
+        "text-anchor": "end",
+        fill: "black",
+        class: "text",
+      }).textContent = `${
+        labelValue >= 1000 ? labelValue / 1000 + " mB" : labelValue + " kB"
+      }`;
+    }
   });
 }
 

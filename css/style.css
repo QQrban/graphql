@@ -29,6 +29,11 @@ input {
   outline: none;
 }
 
+#default_select,
+.nes-btn {
+  border-image-repeat: unset;
+}
+
 body {
   display: flex;
   flex-direction: column;
@@ -47,7 +52,7 @@ body.home {
   width: 100%;
   padding-top: 140px;
   display: flex;
-  flex-wrap: wrap;
+  justify-content: center;
   gap: 20px;
 }
 
@@ -59,6 +64,8 @@ body.home {
 
 #graph {
   flex: 1;
+  flex-shrink: 0;
+  height: 100%;
 }
 
 #graphContainer {
@@ -176,6 +183,57 @@ h1 {
   padding: 4px 6px;
 }
 
-text {
-  font-size: 7.5px !important;
+.text {
+  font-size: 12px !important;
+}
+
+.amount {
+  font-size: 9px !important;
+}
+
+@media (max-width: 1674px) {
+  #content.articles {
+    flex-direction: column;
+  }
+
+  .left-column {
+    order: 2;
+    align-self: center;
+  }
+
+  #graph {
+    order: 1;
+  }
+}
+
+@media (max-width: 1415px) {
+  header {
+    flex-direction: column;
+  }
+
+  h1 {
+    order: 1;
+  }
+  .select-container {
+    order: 2;
+  }
+  .header-logout-git {
+    order: 3;
+  }
+
+  #content.articles {
+    padding-top: 270px;
+  }
+}
+
+@media (max-width: 872px) {
+  h1 {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 645px) {
+  .audits-container div {
+    font-size: 12px;
+  }
 }

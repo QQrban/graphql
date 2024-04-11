@@ -110,7 +110,6 @@ function renderHomePage() {
       });
       if (response.ok) {
         const data = await response.json();
-        console.log(data);
         sessionStorage.setItem("JWT", data);
         updateAppState();
       } else {

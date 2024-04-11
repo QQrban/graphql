@@ -131,6 +131,26 @@ async function renderArticlesPage(token) {
     }
     buildGraph(processedData);
   });
+
+  let currentWidth = window.innerWidth;
+
+  function adjustSvgSize() {
+    const newWidth = window.innerWidth;
+
+    if (newWidth !== currentWidth) {
+      currentWidth = newWidth;
+
+      if (window.matchMedia("(max-width: 768px)").matches) {
+        buildGraph(processedData, 600, 700);
+      } else if (window.matchMedia("(max-width: 589px)").matches) {
+        buildGraph(processedData, 400, 700);
+      } else {
+        buildGraph(processedData, 1220, 700);
+      }
+    }
+  }
+
+  window.addEventListener("resize", adjustSvgSize);
 }
 
 export { renderArticlesPage };
